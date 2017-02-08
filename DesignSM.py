@@ -4,51 +4,76 @@
 #                                             #
 #                                             #
 # Contrib: uChouinard                         #
-# V0 2/12/2016                                #
+#                                             #
 #                                             #
 ###############################################
 
 
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pds
 
-
-class DesignSM():
+class DSM():
+    
+    def __init__(self, nElems=1, compList={}, dataType='simple'):
+        
+        if dataType=='simple':
+            self.dsm=np.array([[0.]])
+        elif dataType=='interactions':
+            self.dsm=np.array([[[0., 0. , 0. , 0.]]])
+        self.compList=compList
+        self.dataType=dataType
     
     
-    def __init__(self, name):
+    def addComponent(self, compName):
         
+        if not self.compList:
+            
+            self.compList[compName]=0
+            print self.compList
+            
+        elif compName not in self.compList:
+            clen=len(self.compList)
+            
+            self.compList[compName]=clen
+            print self.compList
+            
+            if self.dataType=='simple':
+                tmpDSM=np.zeros((clen+1, clen+1))
+            elif self.dataType=='interactions':
+                tmpDSM=np.zeros((clen+1, clen+1,4))
+            
+            tmpDSM[:clen, :clen]=self.dsm
+            
+            self.dsm=tmpDSM
+            
+    def addRelation(self, cFrom, cTo, val=1. ):
         
-        self.name=name
-        self.compList= {}
-        self.dsm= np.empty([0,0])
-        print self.dsm
+        if cFrom not in self.compList:
+            self.addComponent(cFrom)
+        if cTo not in self.compList:
+            self.addComponent(cTo)
         
+        self.dsm[self.compList[cFrom] , self.compList[cTo]]=val
     
     
-    def addComponent(self, cName):
-        self.compList[cName]=len(self.compList.keys())
-
-        if len(self.compList.keys())==1:
-            self.dsm=np.zeros([1,1])
-        else:
-            self.dsm=np.append(self.dsm, np.zeros([self.dsm.shape[1], 1]).T, axis=0)           
-            self.dsm=np.append(self.dsm, np.zeros([self.dsm.shape[0], 1]), axis=1)
-
-    def addRelation(self, cNameFrom, cNameTo, val=1):
+    def __str__(self):
         
-        if not(cNameFrom in self.compList):
-            self.addComponent(cNameFrom)
-        if not(cNameTo in self.compList):
-            self.addComponent(cNameTo)
+        resStr=' '
+         
+        cKeys = sorted(self.compList, key=lambda x : self.compList[x])
+        for i in cKeys:
+            
+            resStr+= '\t' + i
+        resStr += '\n'
         
-        self.dsm[self.compList[cNameFrom], self.compList[cNameTo] ]=val
+        for i in range(len(cKeys)):
+            
+            resStr+= cKeys[i]
+            for j in range(len(cKeys)):
+                
+                resStr+= '\t'+ str(self.dsm[i,j])
+            resStr+='\n'
+        return resStr
         
-    
-    
-    def display(self):
-        print self.dsm
-        #print self.compList
         
       
