@@ -11,4 +11,4 @@ Python Coding
 Features :
   
   -Creation of Design Structure Matrices (DSM)
-  -
+  -Example use of the module
