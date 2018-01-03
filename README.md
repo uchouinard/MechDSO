@@ -8,7 +8,6 @@ Software for the design support and optimization of mechatronics systems
 
 Python Coding
 
-Features :
-  
-  -Creation of Design Structure Matrices (DSM)
-  -Example use of the module
+## Features :
+-Creation of Design Structure Matrices (DSM)
+-Example use of the module
